@@ -341,3 +341,7 @@ z-term.o: z-term.c $(HDRS) z-term.h z-virt.h
 z-util.o: z-util.c $(HDRS) z-util.h
 z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 
+
+mort.o: mort.c $(INCS)
+mort_test: mort.o z-util.o z-virt.o
+
