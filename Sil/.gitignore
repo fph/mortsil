@@ -1,0 +1,4 @@
+src/*.o
+sil
+src/Makefile
+
