@@ -14,8 +14,8 @@ struct odds
 typedef struct odds odds;
 
 /* functions to manage odds */
-/* all returned results have to be freed with delete_odds*/
-odds* make_odds(); /*return an "empty throw" of 0d0*/
+/* all returned results have to be freed with kill_odds*/
+odds* make_odds(); /*return an "empty throw" of 0d1*/
 void add_throw(odds* o, int n, int sides);
 void add_const(odds* o, int n);
 void kill_odds(odds*);
