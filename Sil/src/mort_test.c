@@ -1,13 +1,13 @@
 #include "mort.h"
 
 #include <stdio.h>
-
+#include <math.h>
 
 int main(){
   printf("Running tests...\n");
 
 
-  odds *r = make_odds();
+  odds *r = make_empty_odds();
 
   if(r->p[0] != 1){
     printf("FAIL\n");
@@ -19,7 +19,14 @@ int main(){
     printf("FAIL\n");
   }
   
-  if(r->p[4] != 1/3){
+  if(fabs(r->p[4]-1./3.) > 1e-8){
+    printf("FAIL\n");
+  }
+//  print_odds(r);
+  
+  min_twice(r);
+//  print_odds(r);
+  if(fabs(r->p[5]-8./81.)>1e-8){
     printf("FAIL\n");
   }
 

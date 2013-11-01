@@ -343,5 +343,5 @@ z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 
 
 mort.o: mort.c $(INCS)
-mort_test: mort.o z-util.o z-virt.o
+mort_test: mort.o z-util.o z-virt.o variable.o
 
