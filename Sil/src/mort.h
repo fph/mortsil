@@ -33,7 +33,7 @@ void min_twice(odds*); /*set odds to the pdf of min(a,b), for (a,b) independent 
 
 
 void add_throw(odds* o, int n, int sides); /*adds to the current odds n dice with a given number of sides*/
-void add_variable_throw(odds* o, odds *n, int sides); /*adds to the current odds n dice with a given number of sides, where n varies according to other odds*/
+odds* make_variable_throw(odds *n, int sides); /*create pdf of throwing n dice with a given number of sides, where n varies according to another distribution*/
 
 void print_odds(odds*);
 

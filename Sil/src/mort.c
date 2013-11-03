@@ -75,11 +75,16 @@ void add_throw(odds* o, int n, int sides){
   add_throw(o,n-1,sides);
 }
 
-void add_variable_throw(odds* o, odds* n, int sides){
-  int k;
-  for(k=0;k<n->length;k++){
-    //TODO
+odds* make_variable_throw(odds* n, int sides){
+  int i;
+  odds *o=make_empty_odds((n->length-1)*sides+1);
+  o->p[0]=n->p[0]; //we get 0 if we throw 0 dice
+  odds *tmp=make_zero_odds();
+  for(i=1;i< n->length; i++){ //1 or more
+    add_throw(tmp,1,sides);
+    add_scaled_odds(o,n->p[i],tmp);
   }
+  return o;
 }
 
 void add_const(odds* o, int n){
