@@ -39,10 +39,21 @@ void kill_odds(odds* r){
 }
 
 void add_scaled_odds(odds* o1, double constant, odds* o2){
+  int i;
   if(o1==NULL){
-    //TODO
+    o1=make_empty_odds(o2->length);
+  }
+  if(o1->length < o2->length){ /*must reallocate o1 to extend it*/
+    double* newp=make_p(o2->length);
+    for(i=0;i<o1->length;i++){
+      newp[i]=o1->p[i];
+    }
+    set_odds(o1,newp,o2->length);
   }
   
+  for(i=0;i<o2->length;i++){
+    o1->p[i]+= constant * o2->p[i];
+  }
 }
 
 void add_throw(odds* o, int n, int sides){
