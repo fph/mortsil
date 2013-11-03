@@ -75,6 +75,23 @@ void add_throw(odds* o, int n, int sides){
   add_throw(o,n-1,sides);
 }
 
+void compress_odds(odds* o){
+  int i;
+  for(i=o->length-1;i>=1;i--){
+    if(o->p[i]!=0.){
+      break;
+    }
+  }
+  if(i < o->length-1){
+    double *newp=make_p(i+1);
+    int j;
+    for(j=0;j<i+1;j++){
+     newp[j]=o->p[j];
+    }
+    set_odds(o,newp,i+1);
+  }
+}
+
 odds* make_variable_throw(odds* n, int sides){
   int i;
   odds *o=make_empty_odds((n->length-1)*sides+1);
@@ -151,6 +168,7 @@ odds* dam_roll_normal(odds* hit_result, int dd, int ds, const monster_race *r_pt
     int rolls=dd+elem_bonus_dice+(no_crit)?0:crit_bonus(i, 20 * dd, r_ptr, S_MEL, FALSE);
     o->p[rolls]+=hit_result->p[i];
   }
+  compress_odds(o);
   return o;  
 }
 

@@ -30,7 +30,7 @@ void add_const(odds* o, int n);
 void kill_odds(odds*); /*frees memory*/
 void min_twice(odds*); /*set odds to the pdf of min(a,b), for (a,b) independent and distributed as odds*/
 
-
+void compress_odds(odds* o); /*removes trailing zeros from an odds structure*/
 
 void add_throw(odds* o, int n, int sides); /*adds to the current odds n dice with a given number of sides*/
 odds* make_variable_throw(odds *n, int sides); /*create pdf of throwing n dice with a given number of sides, where n varies according to another distribution*/

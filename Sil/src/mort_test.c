@@ -29,7 +29,7 @@ int main(){
   }
 
   kill_odds(r);
-  
+
   //tests: cast 0 or 1 or 2 d2
   odds* n=make_empty_odds(3);
   n->p[0]=1./3.;
@@ -40,6 +40,32 @@ int main(){
     print_odds(o);
     printf("FAIL 5\n");
   }
+  kill_odds(n);
+  kill_odds(o);
+
+  //test compress_odds
+  r=make_empty_odds(5);
+  compress_odds(r);
+  if(r->length != 1){
+    printf("FAIL 6\n");
+  }
+  kill_odds(r);
+  
+  r=make_empty_odds(5);
+  r->p[3]=1.;
+  compress_odds(r);
+  if(r->length != 4){
+    printf("FAIL 7\n");
+  }
+  kill_odds(r);
+ 
+  r=make_empty_odds(5);
+  r->p[4]=1.;
+  compress_odds(r);
+  if(r->length != 5){
+    printf("FAIL 7\n");
+  }
+  kill_odds(r);
   
   printf("Done!\n");
   return 0;
