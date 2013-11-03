@@ -101,6 +101,7 @@ odds* make_variable_throw(odds* n, int sides){
     add_throw(tmp,1,sides);
     add_scaled_odds(o,n->p[i],tmp);
   }
+  kill_odds(tmp);
   return o;
 }
 
@@ -137,10 +138,16 @@ odds* odds_difference_capped(odds *o1, odds* o2){
   return diff;
 }
 
-odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2){
+odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2, bool is_spore){
   if(m_ptr2!=PLAYER){
     quit("Errouneous use of hit_roll_odds - it's supposed to work only for hits to the player");  
   }
+  if(is_spore){ //result is always "1"
+    odds* o=make_empty_odds(2);
+    o->p[1]=1.;
+    return o;    
+  }
+  
   odds* oatt=make_zero_odds();
   odds* oevn=make_zero_odds();
   add_throw(oatt,1,20);    
@@ -156,22 +163,86 @@ odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_
   return diff;
 }
 
-odds* dam_roll_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit){
+odds* damroll_odds_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit){
   const int MAX_DICE=40; //assume can't have more than this number of dice
-  odds* o=make_empty_odds(MAX_DICE);
+  odds* dice=make_empty_odds(MAX_DICE);
   int i;
   
   for(i=0;i<hit_result->length;i++){
     if(i==0 && effect){
-      o->p[0]+=hit_result->p[i];  //miss==0 rolls
+      dice->p[0]+=hit_result->p[i];  //miss==0 rolls
     }
     int rolls=dd+elem_bonus_dice+(no_crit)?0:crit_bonus(i, 20 * dd, r_ptr, S_MEL, FALSE);
-    o->p[rolls]+=hit_result->p[i];
+    dice->p[rolls]+=hit_result->p[i];
   }
-  compress_odds(o);
+  compress_odds(dice);
+  
+  odds* o=make_variable_throw(dice,ds);
+  
   return o;  
 }
 
+odds* protection_roll_odds(int typ, bool melee)
+{
+	int i;
+	object_type *o_ptr;
+	int mult = 1;
+	int armour_weight = 0;
+	
+	// things that always count:
+	
+	odds *prt=make_zero_odds();
+	
+	if (singing(SNG_STAYING))
+	{
+	  add_throw(prt,1,MAX(1, ability_bonus(S_SNG, SNG_STAYING)));
+	}
+	
+	if (p_ptr->active_ability[S_WIL][WIL_HARDINESS])
+	{
+	  add_throw(prt,1,p_ptr->skill_use[S_WIL] / 6);
+	}
+	
+	// armour:
+	
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	{
+		o_ptr = &inventory[i];
+		if (i >= INVEN_BODY) armour_weight += o_ptr->weight;
 
+		// fire and cold and generic 'hurt' all check the shield
+		if (i == INVEN_ARM)
+		{
+			if ((typ == GF_HURT) || (typ == GF_FIRE) || (typ == GF_COLD))
+			{
+				if (p_ptr->active_ability[S_EVN][EVN_BLOCKING] && (!melee || (p_ptr->previous_action[0] == 5)))
+				{
+					mult = 2;
+				}
+				if (o_ptr->pd > 0)
+				{
+				  add_throw(prt,o_ptr->pd * mult, o_ptr->ps);
+				}
+			}
+		}
+		
+		// also add protection if damage is generic 'hurt' or it is a ring or amulet slot
+		else if ((typ == GF_HURT) || (i == INVEN_LEFT) || (i == INVEN_RIGHT) || (i == INVEN_NECK))
+		{
+			if (o_ptr->ps > 0)
+			{
+			  add_throw(prt,o_ptr->pd, o_ptr->ps);
+			}
+		}
+	}
+
+	// heavy armour bonus
+	if (p_ptr->active_ability[S_EVN][EVN_HEAVY_ARMOUR] && (typ == GF_HURT))
+	{
+	  add_throw(prt,1, armour_weight / 150);
+	}
+	
+	return prt;
+}
 
 
