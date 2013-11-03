@@ -7,7 +7,7 @@ int main(){
   printf("Running tests...\n");
 
 
-  odds *r = make_empty_odds();
+  odds *r = make_zero_odds();
 
   if(r->p[0] != 1){
     printf("FAIL\n");

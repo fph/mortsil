@@ -20,14 +20,20 @@ typedef struct odds odds;
 
 /* functions to manage odds (i.e., discrete pdf's over [0,length-1]) */
 /* all returned results have to be freed with kill_odds*/
-odds* make_empty_odds(); /*return an "empty throw" of 0d1*/
+odds* make_zero_odds(); /*return the pdf of constant 0*/
+odds* make_empty_odds(int length); /*return an empty pdf (zero vector of given length) */
 double* make_p(int length); /*allocates a double[length] and sets it to 0.0*/ 
 void set_odds(odds* o, double *p, int length); /*set the content of o to the given pdf and length p. Will take ownership of the pointer p*/
-void add_throw(odds* o, int n, int sides); /*adds to the current odds n dice with a given number of sides*/
-void add_variable_throw(odds* o, odds *n, int sides); /*adds to the current odds n dice with a given number of sides, where n varies according to other odds*/
+
+void add_scaled_odds(odds *o1, double constant, odds* o2); /*adds a multiple of o2 to o1. If o1==NULL, simply return a scaled version of o2*/
 void add_const(odds* o, int n);
 void kill_odds(odds*); /*frees memory*/
 void min_twice(odds*); /*set odds to the pdf of min(a,b), for (a,b) independent and distributed as odds*/
+
+
+
+void add_throw(odds* o, int n, int sides); /*adds to the current odds n dice with a given number of sides*/
+void add_variable_throw(odds* o, odds *n, int sides); /*adds to the current odds n dice with a given number of sides, where n varies according to other odds*/
 
 void print_odds(odds*);
 
@@ -41,7 +47,7 @@ odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_
 /*logic must match make_attack_normal in cmd1.c */
 /*passes all the parameters that we need. The r_ptr is the one passed to crit_bonus */
 /*there is a switch so that if !effect then we always hit - not sure if this is actually used anywhere */
-odds* dam_roll_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, elem_bonus_dice, int effect);
+odds* dam_roll_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit);
 
 /*TODO: simulate make_attack_normal, make_attack_ranged from melee1.c */
 

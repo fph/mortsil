@@ -59,8 +59,7 @@ OBJS = \
   main-cap.o \
   main-gcu.o \
   main-x11.o maid-x11.o \
-  main-gtk.o \
-  main.o
+  main-gtk.o
 
 
 
@@ -262,8 +261,8 @@ install: sil
 # Build the "Sil" program
 #
 
-sil: $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o sil $(OBJS) $(LIBS)
+sil: $(OBJS) main.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o sil $(OBJS) main.o $(LIBS)
 
 
 #
@@ -343,5 +342,6 @@ z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 
 
 mort.o: mort.c $(INCS)
-mort_test: mort.o z-util.o z-virt.o variable.o
+mort_test: mort.o $(OBJS) mort_test.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o mort_test $(OBJS) mort_test.c mort.o $(LIBS)
 

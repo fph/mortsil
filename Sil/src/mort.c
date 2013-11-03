@@ -13,12 +13,17 @@ double* make_p(int length){
   return p;
 }
 
-odds* make_empty_odds(){
+odds* make_empty_odds(int length){
   odds* o;
-  MAKE(o,odds);
-  o->length=1;
-  C_MAKE(o->p,1,double);
-  o->p[0]=1;
+  MAKE(o, odds);
+  o->length=length;
+  o->p=make_p(length);
+  return o;
+}
+
+odds* make_zero_odds(){
+  odds* o=make_empty_odds(1);
+  o->p[0]=1.;
   return o;
 }
 
@@ -31,6 +36,13 @@ void set_odds(odds* o, double* p, int length){
 void kill_odds(odds* r){
   KILL(r->p);
   KILL(r);
+}
+
+void add_scaled_odds(odds* o1, double constant, odds* o2){
+  if(o1==NULL){
+    //TODO
+  }
+  
 }
 
 void add_throw(odds* o, int n, int sides){
@@ -52,10 +64,10 @@ void add_throw(odds* o, int n, int sides){
   add_throw(o,n-1,sides);
 }
 
-void add_variable_throw(odds* o, odds* n, int sides{
+void add_variable_throw(odds* o, odds* n, int sides){
   int k;
   for(k=0;k<n->length;k++){
-    
+    //TODO
   }
 }
 
@@ -83,24 +95,21 @@ void min_twice(odds* o){
 
 odds* odds_difference_capped(odds *o1, odds* o2){
   int i,j;
-  double *newp=make_p(o1->length);
+  odds *diff=make_empty_odds(o1->length);
   for(i=0;i<o1->length;i++){
     for(j=0;j<o2->length;j++){
-      newp[MAX(0,i-j)]+= o1->p[i]*o2->p[j];
+      diff->p[MAX(0,i-j)]+= o1->p[i]*o2->p[j];
     }
   }
-  
-  odds* o=make_empty_odds();
-  set_odds(o,newp,o1->length);
-  return o;
+  return diff;
 }
 
 odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2){
   if(m_ptr2!=PLAYER){
     quit("Errouneous use of hit_roll_odds - it's supposed to work only for hits to the player");  
   }
-  odds* oatt=make_empty_odds();
-  odds* oevn=make_empty_odds();
+  odds* oatt=make_zero_odds();
+  odds* oevn=make_zero_odds();
   add_throw(oatt,1,20);    
   add_throw(oevn,1,20);
   if(p_ptr->cursed){
@@ -114,23 +123,19 @@ odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_
   return diff;
 }
 
-odds* dam_roll_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, elem_bonus_dice, int effect, int no_crit){
+odds* dam_roll_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit){
   const int MAX_DICE=40; //assume can't have more than this number of dice
-
-  double *p_dice=make_p(MAX_DICE);
+  odds* o=make_empty_odds(MAX_DICE);
   int i;
   
   for(i=0;i<hit_result->length;i++){
     if(i==0 && effect){
-      p_dice[0]+=hit_result->p[i];  //miss==0 rolls
+      o->p[0]+=hit_result->p[i];  //miss==0 rolls
     }
     int rolls=dd+elem_bonus_dice+(no_crit)?0:crit_bonus(i, 20 * dd, r_ptr, S_MEL, FALSE);
-    p_dice[rolls]+=hit_result->p[i];
+    o->p[rolls]+=hit_result->p[i];
   }
-  
-  odds* dice=make_empty_odds();
-  set_odds(dice,p_dice,MAX_DICE);
-  
+  return o;  
 }
 
 
