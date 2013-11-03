@@ -430,266 +430,220 @@ bool make_attack_normal(monster_type *m_ptr)
 		{
 			hit_result = hit_roll(total_attack_mod, total_evasion_mod, m_ptr, PLAYER, TRUE);
 		}
-		
+
+	/* Describe the attack method, apply special hit chance mods. */
+	/* This needs to happen even if there is the monster misses, for mortality odds calculation purposes*/
+	/* FIXME: the following cose uses "dam" somewhere, but dam==0 at this point -- must be an earlier error -fpoloni*/
+	switch (method)
+	{
+		case RBM_HIT:
+		{
+			/* Handle special effect types */
+			if (effect == RBE_WOUND)
+			{
+			if      (dam >= 20) act = "gouges you";  
+				else if (dam >= 10) act = "slashes you";
+				else                act = "cuts you";
+			}
+			else if (effect == RBE_BATTER)
+			{
+				if      (dam >= 20) act = "batters you";
+				else if (dam >= 10) act = "bashes you";
+				else                act = "hits you";
+			}
+			else
+			{
+				act = "hits you";
+			}
+			do_cut = do_stun = 1;
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_TOUCH:
+		{
+			act = "touches you";
+			
+			// ignores armor
+			prt_percent = 0;
+			
+			// can't do criticals
+			no_crit = TRUE;
+			
+			break;
+		}
+	  case RBM_PUNCH:
+		{
+			act = "punches you";
+			do_stun = 1;
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+  	case RBM_KICK:
+		{
+			act = "kicks you";
+			do_stun = 1;
+			// stopped by armor
+			prt_percent = 100;
+			break;
+		}
+		case RBM_CLAW:
+		{
+			if      (dam >= 25) act = "slashes you";
+			else                act = "claws you";
+			do_cut = 1;
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_BITE:
+		{
+			act = "bites you";
+			do_cut = 1;
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_PECK:
+		{
+			act = "pecks you";
+				do_cut = 1;
+				// stopped by armor
+				prt_percent = 100;
+				break;
+		}
+		case RBM_STING:
+		{
+			act = "stings you";
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_BUTT:
+		{
+			if (dam >= rand_range(10, 20)) act = "tramples you";
+			else                           act = "butts you";
+			do_stun = 1;
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_CRUSH:
+		{
+			if (dam >= 10) act = "crushes you";
+			else           act = "squeezes you";
+			do_stun = 1;
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_ENGULF:
+		{
+			if (dam >= 20) act = "envelops you";
+			else                    act = "engulfs you";
+				// stopped by armor
+			prt_percent = 100;
+				// can't do criticals
+			no_crit = TRUE;
+				break;
+		}
+		case RBM_CRAWL:
+		{
+			act = "crawls on you";
+				// ignores half armor
+			prt_percent = 50;
+				break;
+		}
+		case RBM_DROOL:
+		{
+			act = "drools on you";
+				// ignores armor
+			prt_percent = 0;
+				break;
+		}
+		case RBM_SPIT:
+		{
+			act = "spits on you";
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_SLIME:
+		{
+			act = "You've been slimed!";
+				// ignores armor
+			prt_percent = 0;
+				break;
+		}
+		case RBM_GAZE:
+		{
+			if      (dam >= rand_range(20, 30))
+				act = "glares at you terribly";
+			else if (dam >= rand_range(5, 30))
+				act = "gazes upon you";
+			else act = "gazes at you";
+				// ignores armor
+			prt_percent = 0;
+				// can't do criticals
+			no_crit = TRUE;
+				break;
+		}
+		case RBM_WAIL:
+		{
+			act = "makes a horrible wail";
+				// ignores armor
+			prt_percent = 0;
+				// can't do criticals
+			no_crit = TRUE;
+				break;
+		}
+		case RBM_SPORE:
+		{
+			act = "releases a cloud of spores";
+				// ignores armor
+			prt_percent = 0;
+				// can't do criticals
+			no_crit = TRUE;
+				break;
+		}
+		case RBM_WHIP:
+		{
+			act = "whips you";
+				// stopped by armor
+			prt_percent = 100;
+				break;
+		}
+		case RBM_XXX4:
+		case RBM_XXX5:
+		case RBM_XXX6:
+			{
+			act = "projects XXX's at you";
+				// ignores armor
+			prt_percent = 0;
+				break;
+		}
+		case RBM_BEG:
+		{
+			act = "begs you for money";
+				// ignores armor
+			prt_percent = 0;
+				break;
+		}
+		case RBM_INSULT:
+		{
+			act = desc_insult[rand_int(MAX_DESC_INSULT)];
+				// ignores armor
+			prt_percent = 0;
+				break;
+		}
+	}
+
 		/* Monster hits player */
 		if (!effect || (hit_result > 0))
 		{
 			/* Always disturbing */
 			disturb(1, 0);
-
-			/* Describe the attack method, apply special hit chance mods. */
-			switch (method)
-			{
-				case RBM_HIT:
-				{
-					/* Handle special effect types */
-					if (effect == RBE_WOUND)
-					{
-						if      (dam >= 20) act = "gouges you";
-						else if (dam >= 10) act = "slashes you";
-						else                act = "cuts you";
-					}
-					else if (effect == RBE_BATTER)
-					{
-						if      (dam >= 20) act = "batters you";
-						else if (dam >= 10) act = "bashes you";
-						else                act = "hits you";
-					}
-					else
-					{
-						act = "hits you";
-					}
-					do_cut = do_stun = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_TOUCH:
-				{
-					act = "touches you";
-					
-					// ignores armor
-					prt_percent = 0;
-					
-					// can't do criticals
-					no_crit = TRUE;
-					
-					break;
-				}
-
-				case RBM_PUNCH:
-				{
-					act = "punches you";
-					do_stun = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-
-				case RBM_KICK:
-				{
-					act = "kicks you";
-					do_stun = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_CLAW:
-				{
-					if      (dam >= 25) act = "slashes you";
-					else                act = "claws you";
-					do_cut = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_BITE:
-				{
-					act = "bites you";
-					do_cut = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_PECK:
-				{
-					act = "pecks you";
-					do_cut = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_STING:
-				{
-					act = "stings you";
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_BUTT:
-				{
-					if (dam >= rand_range(10, 20)) act = "tramples you";
-					else                           act = "butts you";
-					do_stun = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_CRUSH:
-				{
-					if (dam >= 10) act = "crushes you";
-					else           act = "squeezes you";
-					do_stun = 1;
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_ENGULF:
-				{
-					if (dam >= 20) act = "envelops you";
-					else                    act = "engulfs you";
-
-					// stopped by armor
-					prt_percent = 100;
-
-					// can't do criticals
-					no_crit = TRUE;
-
-					break;
-				}
-				case RBM_CRAWL:
-				{
-					act = "crawls on you";
-
-					// ignores half armor
-					prt_percent = 50;
-
-					break;
-				}
-				case RBM_DROOL:
-				{
-					act = "drools on you";
-
-					// ignores armor
-					prt_percent = 0;
-
-					break;
-				}
-				case RBM_SPIT:
-				{
-					act = "spits on you";
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_SLIME:
-				{
-					act = "You've been slimed!";
-
-					// ignores armor
-					prt_percent = 0;
-
-					break;
-				}
-				case RBM_GAZE:
-				{
-					if      (dam >= rand_range(20, 30))
-						act = "glares at you terribly";
-					else if (dam >= rand_range(5, 30))
-						act = "gazes upon you";
-					else act = "gazes at you";
-
-					// ignores armor
-					prt_percent = 0;
-
-					// can't do criticals
-					no_crit = TRUE;
-
-					break;
-				}
-				case RBM_WAIL:
-				{
-					act = "makes a horrible wail";
-
-					// ignores armor
-					prt_percent = 0;
-
-					// can't do criticals
-					no_crit = TRUE;
-
-					break;
-				}
-				case RBM_SPORE:
-				{
-					act = "releases a cloud of spores";
-
-					// ignores armor
-					prt_percent = 0;
-
-					// can't do criticals
-					no_crit = TRUE;
-
-					break;
-				}
-				case RBM_WHIP:
-				{
-					act = "whips you";
-
-					// stopped by armor
-					prt_percent = 100;
-
-					break;
-				}
-				case RBM_XXX4:
-				case RBM_XXX5:
-				case RBM_XXX6:
-				{
-					act = "projects XXX's at you";
-
-					// ignores armor
-					prt_percent = 0;
-
-					break;
-				}
-				case RBM_BEG:
-				{
-					act = "begs you for money";
-
-					// ignores armor
-					prt_percent = 0;
-
-					break;
-				}
-				case RBM_INSULT:
-				{
-					act = desc_insult[rand_int(MAX_DESC_INSULT)];
-
-					// ignores armor
-					prt_percent = 0;
-
-					break;
-				}
-			}
 
 			/* Determine critical-hit bonus dice (if any) */
 			/* Treats attack a weapon weighing 2 pounds per damage die  */

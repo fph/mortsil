@@ -52,6 +52,13 @@ void add_throw(odds* o, int n, int sides){
   add_throw(o,n-1,sides);
 }
 
+void add_variable_throw(odds* o, odds* n, int sides{
+  int k;
+  for(k=0;k<n->length;k++){
+    
+  }
+}
+
 void add_const(odds* o, int n){
   add_throw(o,n,1);
 }
@@ -106,4 +113,26 @@ odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_
   kill_odds(oevn);
   return diff;
 }
+
+odds* dam_roll_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, elem_bonus_dice, int effect, int no_crit){
+  const int MAX_DICE=40; //assume can't have more than this number of dice
+
+  double *p_dice=make_p(MAX_DICE);
+  int i;
+  
+  for(i=0;i<hit_result->length;i++){
+    if(i==0 && effect){
+      p_dice[0]+=hit_result->p[i];  //miss==0 rolls
+    }
+    int rolls=dd+elem_bonus_dice+(no_crit)?0:crit_bonus(i, 20 * dd, r_ptr, S_MEL, FALSE);
+    p_dice[rolls]+=hit_result->p[i];
+  }
+  
+  odds* dice=make_empty_odds();
+  set_odds(dice,p_dice,MAX_DICE);
+  
+}
+
+
+
 
