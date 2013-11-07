@@ -3,6 +3,8 @@
 #include "z-virt.h"
 #include "z-util.h"
 
+#include <math.h>
+
 double* make_p(int length){
   double* p;
   int i;
@@ -38,6 +40,17 @@ void kill_odds(odds* r){
   KILL(r);
 }
 
+void check_sum(odds* o){
+  double sum=0;
+  int i;
+  for(i=0;i<o->length;i++){
+    sum+=o->p[i];
+  }
+  if(fabs(sum-1.)>1e-8){
+    quit("wrong odds sum");
+  }
+}
+
 void add_scaled_odds(odds* o1, double constant, odds* o2){
   int i;
   if(o1==NULL){
@@ -54,6 +67,7 @@ void add_scaled_odds(odds* o1, double constant, odds* o2){
   for(i=0;i<o2->length;i++){
     o1->p[i]+= constant * o2->p[i];
   }
+  //no check_sum here
 }
 
 void add_throw(odds* o, int n, int sides){
@@ -73,6 +87,7 @@ void add_throw(odds* o, int n, int sides){
   }
   set_odds(o,newp,newlength);
   add_throw(o,n-1,sides);
+  check_sum(o);
 }
 
 void compress_odds(odds* o){
@@ -90,6 +105,7 @@ void compress_odds(odds* o){
     }
     set_odds(o,newp,i+1);
   }
+  check_sum(o);
 }
 
 odds* make_variable_throw(odds* n, int sides){
@@ -102,6 +118,7 @@ odds* make_variable_throw(odds* n, int sides){
     add_scaled_odds(o,n->p[i],tmp);
   }
   kill_odds(tmp);
+  check_sum(o);
   return o;
 }
 
@@ -125,6 +142,7 @@ void min_twice(odds* o){
     }
   }
   set_odds(o,newp,o->length);
+  check_sum(o);
 }
 
 odds* odds_difference_capped(odds *o1, odds* o2){
@@ -135,7 +153,19 @@ odds* odds_difference_capped(odds *o1, odds* o2){
       diff->p[MAX(0,i-j)]+= o1->p[i]*o2->p[j];
     }
   }
+  check_sum(diff);
   return diff;
+}
+
+void odds_multiply_percent(odds* o, int percent){
+  int i;
+  int newlength=((o->length-1)*percent)/100 + 1;
+  double *newp=make_p(newlength);
+  for(i=0;i<o->length;i++){
+    newp[(i*percent)/100] += o->p[i];
+  }
+  set_odds(o,newp,newlength);
+  check_sum(o);
 }
 
 odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2, bool is_spore){
@@ -172,8 +202,10 @@ odds* damroll_odds_normal(odds* hit_result, int dd, int ds, const monster_race *
     if(i==0 && effect){
       dice->p[0]+=hit_result->p[i];  //miss==0 rolls
     }
-    int rolls=dd+elem_bonus_dice+(no_crit)?0:crit_bonus(i, 20 * dd, r_ptr, S_MEL, FALSE);
-    dice->p[rolls]+=hit_result->p[i];
+    else{
+    	int rolls=dd+elem_bonus_dice+((no_crit)?0:crit_bonus(i, 20 * dd, r_ptr, S_MEL, FALSE));
+    	dice->p[rolls]+=hit_result->p[i];
+    }
   }
   compress_odds(dice);
   

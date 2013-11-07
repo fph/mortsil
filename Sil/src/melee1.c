@@ -643,16 +643,27 @@ bool make_attack_normal(monster_type *m_ptr)
 		elem_bonus_dice = elem_bonus(effect);
 
 		/*hit odds computation*/
-		elem_bonus_dice = elem_bonus(effect);
-		odds* hit_result_odds = hit_roll_odds(total_attack_mod, total_evasion_mod, m_ptr, PLAYER, method == RBM_SPORE);
-		odds* dam_odds = damroll_odds_normal(hit_result_odds,dd,ds,&r_info[0],elem_bonus_dice,effect,no_crit);
-		odds* prot_odds = protection_roll_odds(GF_HURT, TRUE);
-		
-		//TODO: protection roll, do stuff with this
+		if(effect!=RBE_DISARM){ //some damage types do not actually do damage, if you read the code below, so we ignore them
+			elem_bonus_dice = elem_bonus(effect);
+			odds* hit_result_odds = hit_roll_odds(total_attack_mod, total_evasion_mod, m_ptr, PLAYER, method == RBM_SPORE);
+			odds* dam_odds = damroll_odds_normal(hit_result_odds,dd,ds,&r_info[0],elem_bonus_dice,effect,no_crit);
+			odds* prot_odds = protection_roll_odds(GF_HURT, TRUE);
+			odds_multiply_percent(prot_odds,prt_percent);
+			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
+			
+			//TODO: do stuff with this
+			//printf("Damage odds:\n");
+			//print_odds(dam_odds);
+			//printf("Protection odds:\n");
+			//print_odds(prot_odds);
+			printf("Net Dam odds:");
+			print_odds(net_dam_odds);
 
-
-		kill_odds(hit_result_odds);
-		kill_odds(dam_odds);
+			kill_odds(hit_result_odds);
+			kill_odds(dam_odds);
+			kill_odds(prot_odds);
+			kill_odds(net_dam_odds);
+		}
 
 		/* Monster hits player */
 		if (!effect || (hit_result > 0))
@@ -1390,7 +1401,7 @@ bool make_attack_normal(monster_type *m_ptr)
 					/* Select the melee weapon */
 					o_ptr = &inventory[INVEN_WIELD];
 
-					/* Nothing to disamr */
+					/* Nothing to disarm */
 					if (!o_ptr->k_idx) break;
 
 					/* Describe */

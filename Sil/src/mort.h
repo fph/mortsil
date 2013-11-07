@@ -37,6 +37,8 @@ odds* make_variable_throw(odds *n, int sides); /*create pdf of throwing n dice w
 
 void odds_multiply_percent(odds* o, int percent); /*multiply x -> (x*percent)/100 (integer division) */
 
+void check_sum(odds* o); //debug-like function that throws an error if the odds of something do not sum to 1
+
 void print_odds(odds*);
 
 odds* odds_difference_capped(odds* o1, odds* o2); /*returns pdf of MAX(0,o1-o2) */

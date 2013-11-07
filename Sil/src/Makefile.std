@@ -56,6 +56,7 @@ OBJS = \
   wizard1.o wizard2.o obj-info.o \
   generate.o dungeon.o init1.o init2.o randart.o \
   use-obj.o \
+  mort.o \
   main-cap.o \
   main-gcu.o \
   main-x11.o maid-x11.o \
