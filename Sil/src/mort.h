@@ -55,8 +55,17 @@ odds* damroll_odds_normal(odds* hit_result, int dd, int ds, const monster_race *
 
 odds* protection_roll_odds(int typ, bool melee);
 
-
-/*TODO: simulate make_attack_normal, make_attack_ranged from melee1.c */
+/*places where damage is dealt: 
+		- make_attack_normal in melee1.c (melee) DONE
+		- project_p in spells1.c (arrows, boulders) TODO
+		- fire_dam_pure, cold_dam_pure, dark_dam_pure in spells1.c (breaths) TODO
+		- hit_trap in cmd1.c (dungeon traps) TODO
+		- chest_trap in cmd2.c (chest traps) TODO
+		- play_instrument in use-obj.c (aiming a trumpet of blasting up) TODO
+		- falling_damage in xtra2.c (falling damage) TODO
+		- process_player in dungeon.c (poison, starvation, cuts) <- we can safely ignore this since it's flat damage, with no random component: either you die or not
+		- earthquake, genocides in spells2.c <- I believe Sil does not use these
+*/
 
 
 #endif /*INCLUDED_MORT_H*/
