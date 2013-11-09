@@ -9,6 +9,7 @@
  */
 
 #include "angband.h"
+#include "mort.h"
 
 /*
  * Mega-Hack -- count number of monsters killed out of sight
@@ -1122,6 +1123,8 @@ void fire_dam_pure(int dd, int ds, bool update_rolls, cptr kb_str)
 	int inv;
 	int resistance = resist_fire();
 			
+	breath_damage_odds(dd, ds, GF_FIRE, resistance);
+			
 	if (resistance > 0) net_dam = dam / resistance;
 	else				net_dam = dam * (-resistance);
 
@@ -1179,6 +1182,8 @@ void cold_dam_pure(int dd, int ds, bool update_rolls, cptr kb_str)
 	int inv;
 	int resistance = resist_cold();
 		
+	breath_damage_odds(dd, ds, GF_COLD, resistance);
+
 	if (resistance > 0) net_dam = dam / resistance;
 	else				net_dam = dam * (-resistance);
 
@@ -1226,6 +1231,8 @@ void dark_dam_pure(int dd, int ds, bool update_rolls, cptr kb_str)
 	int net_dam;
 	int prt = protection_roll(GF_DARK, FALSE);
 	int resistance = resist_dark();
+
+	breath_damage_odds(dd, ds, GF_DARK, resistance);
 	
 	net_dam = dam / resistance;
 	net_dam = net_dam > prt ? net_dam - prt : 0;
@@ -3214,6 +3221,20 @@ static bool project_p(int who, int y, int x, int dd, int ds, int dif, int typ)
 			// perform the hit roll
 			hit_result = hit_roll(total_attack_mod, total_evasion_mod, m_ptr, PLAYER, TRUE);
 			
+			odds* hit_result_odds = hit_roll_odds(total_attack_mod, total_evasion_mod, m_ptr, PLAYER);
+			odds* dam_odds = damroll_odds(hit_result_odds, dd, ds, weight, &r_info[0], 0, S_ARC, FALSE);
+			odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
+			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
+
+			//TODO: do stuff with this
+			printf("Ranged damage odds:\n");
+			print_odds(net_dam_odds);
+
+			kill_odds(hit_result_odds);
+			kill_odds(dam_odds);
+			kill_odds(prot_odds);
+			kill_odds(net_dam_odds);
+			
 			if (hit_result > 0)
 			{
 				crit_bonus_dice = crit_bonus(hit_result, weight, &r_info[0], S_ARC, FALSE);
@@ -3278,6 +3299,21 @@ static bool project_p(int who, int y, int x, int dd, int ds, int dif, int typ)
 						
 			// perform the hit roll
 			hit_result = hit_roll(total_attack_mod, total_evasion_mod, m_ptr, PLAYER, TRUE);
+			
+			odds* hit_result_odds = hit_roll_odds(total_attack_mod, total_evasion_mod, m_ptr, PLAYER);
+			odds* dam_odds = damroll_odds(hit_result_odds, dd, ds, 100, &r_info[0], 0, S_ARC, FALSE);
+			odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
+			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
+
+			//TODO: do stuff with this
+			printf("Ranged damage odds:\n");
+			print_odds(net_dam_odds);
+
+			kill_odds(hit_result_odds);
+			kill_odds(dam_odds);
+			kill_odds(prot_odds);
+			kill_odds(net_dam_odds);
+
 			
 			if (hit_result > 0)
 			{

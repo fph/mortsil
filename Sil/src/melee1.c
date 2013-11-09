@@ -654,7 +654,7 @@ bool make_attack_normal(monster_type *m_ptr)
 			else{
 				hit_result_odds = hit_roll_odds(total_attack_mod, total_evasion_mod, m_ptr, PLAYER);
 			}
-			odds* dam_odds = damroll_odds_normal(hit_result_odds,dd,ds,&r_info[0],elem_bonus_dice,effect,no_crit);
+			odds* dam_odds = damroll_odds(hit_result_odds,dd,ds,20*dd,&r_info[0],elem_bonus_dice,effect,no_crit);
 			odds* prot_odds = protection_roll_odds(GF_HURT, TRUE);
 			odds_multiply_percent(prot_odds,prt_percent);
 			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
@@ -664,7 +664,7 @@ bool make_attack_normal(monster_type *m_ptr)
 			//print_odds(dam_odds);
 			//printf("Protection odds:\n");
 			//print_odds(prot_odds);
-			printf("Net Dam odds:");
+			printf("Melee damage odds:\n");
 			print_odds(net_dam_odds);
 
 			kill_odds(hit_result_odds);

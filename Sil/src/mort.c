@@ -168,6 +168,28 @@ void odds_multiply_percent(odds* o, int percent){
   check_sum(o);
 }
 
+void odds_multiply(odds* o, int n){
+  int i;
+  int newlength=((o->length-1)*n) + 1;
+  double *newp=make_p(newlength);
+  for(i=0;i<o->length;i++){
+    newp[i*n] += o->p[i];
+  }
+  set_odds(o,newp,newlength);
+  check_sum(o);
+}
+
+void odds_divide(odds* o, int d){
+  int i;
+  int newlength=((o->length-1)/d) + 1;
+  double *newp=make_p(newlength);
+  for(i=0;i<o->length;i++){
+    newp[i/d] += o->p[i];
+  }
+  set_odds(o,newp,newlength);
+  check_sum(o);
+}
+
 odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2){
   if(m_ptr2!=PLAYER){
     quit("Errouneous use of hit_roll_odds - it's supposed to work only for hits to the player");  
@@ -188,9 +210,9 @@ odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_
   return diff;
 }
 
-odds* damroll_odds_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit){
+odds* damroll_odds(odds* hit_result, int dd, int ds, int weight, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit){
   const int MAX_DICE=40; //assume can't have more than this number of dice
-  odds* dice=make_empty_odds(MAX_DICE);
+  odds* dice=make_empty_odds(MAX_DICE+1);
   int i;
   
   for(i=0;i<hit_result->length;i++){
@@ -198,7 +220,10 @@ odds* damroll_odds_normal(odds* hit_result, int dd, int ds, const monster_race *
       dice->p[0]+=hit_result->p[i];  //miss==0 rolls
     }
     else{
-    	int rolls=dd+elem_bonus_dice+((no_crit)?0:crit_bonus(i, 20 * dd, r_ptr, S_MEL, FALSE));
+    	int rolls=dd+elem_bonus_dice+((no_crit)?0:crit_bonus(i, weight, r_ptr, S_MEL, FALSE));
+    	if(rolls>MAX_DICE){
+    		quit("Too many damage rolls");
+    	}
     	dice->p[rolls]+=hit_result->p[i];
     }
   }
@@ -272,4 +297,22 @@ odds* protection_roll_odds(int typ, bool melee)
 	return prt;
 }
 
-
+void breath_damage_odds(int dd, int ds, int typ, int resistance){
+	odds* dam_odds = make_zero_odds();
+	add_throw(dam_odds, dd, ds);
+	
+	if (resistance > 0) odds_divide(dam_odds,resistance);
+	else				odds_multiply(dam_odds, (-resistance));
+	
+	odds* prot_odds = protection_roll_odds(typ, FALSE);
+	
+	odds* result = odds_difference_capped(dam_odds, prot_odds);
+	
+	//TODO: do stuff
+	printf("Breath damage odds:\n");
+	print_odds(result);
+	
+	kill_odds(dam_odds);
+	kill_odds(prot_odds);
+	kill_odds(result);
+}

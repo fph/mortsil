@@ -36,6 +36,8 @@ void add_throw(odds* o, int n, int sides); /*adds to the current odds n dice wit
 odds* make_variable_throw(odds *n, int sides); /*create pdf of throwing n dice with a given number of sides, where n varies according to another distribution*/
 
 void odds_multiply_percent(odds* o, int percent); /*multiply x -> (x*percent)/100 (integer division) */
+void odds_multiply(odds* o, int n); /*multiplies by n*/
+void odds_divide(odds* o, int d); /*divides by d*/
 
 void check_sum(odds* o); //debug-like function that throws an error if the odds of something do not sum to 1
 
@@ -48,16 +50,18 @@ odds* odds_difference_capped(odds* o1, odds* o2); /*returns pdf of MAX(0,o1-o2) 
 odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2); 
 
 /*simulates the result of dam_roll and return odds of possible answers.*/
-/*logic must match make_attack_normal in cmd1.c */
+/*logic must match make_attack_normal in cmd1.c and project_p in spells1.c */
 /*passes all the parameters that we need. The r_ptr is the one passed to crit_bonus */
-/*there is a switch so that if !effect then we always hit - not sure if this is actually used anywhere */
-odds* damroll_odds_normal(odds* hit_result, int dd, int ds, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit);
+/*there is a switch in make_attack_normal so that if !effect then we always hit - not sure if this is actually used anywhere */
+odds* damroll_odds(odds* hit_result, int dd, int ds, int weight, const monster_race *r_ptr, int elem_bonus_dice, int effect, int no_crit);
 
 odds* protection_roll_odds(int typ, bool melee);
 
+void breath_damage_odds(int dd, int ds, int typ, int resistance); /*simulates *_dam_pure in spells1.c */
+
 /*places where damage is dealt: 
 		- make_attack_normal in melee1.c (melee) DONE
-		- project_p in spells1.c (arrows, boulders) TODO
+		- project_p in spells1.c (arrows, boulders) DONE
 		- fire_dam_pure, cold_dam_pure, dark_dam_pure in spells1.c (breaths) TODO
 		- hit_trap in cmd1.c (dungeon traps) TODO
 		- chest_trap in cmd2.c (chest traps) TODO
