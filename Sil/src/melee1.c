@@ -645,7 +645,15 @@ bool make_attack_normal(monster_type *m_ptr)
 		/*hit odds computation*/
 		if(effect!=RBE_DISARM){ //some damage types do not actually do damage, if you read the code below, so we ignore them
 			elem_bonus_dice = elem_bonus(effect);
-			odds* hit_result_odds = hit_roll_odds(total_attack_mod, total_evasion_mod, m_ptr, PLAYER, method == RBM_SPORE);
+
+			odds* hit_result_odds;
+			if(method==RBM_SPORE){ //matches the fact that below hit_result is set to 1 for spores
+				hit_result_odds = make_zero_odds();
+				add_const(hit_result_odds,1);
+			}
+			else{
+				hit_result_odds = hit_roll_odds(total_attack_mod, total_evasion_mod, m_ptr, PLAYER);
+			}
 			odds* dam_odds = damroll_odds_normal(hit_result_odds,dd,ds,&r_info[0],elem_bonus_dice,effect,no_crit);
 			odds* prot_odds = protection_roll_odds(GF_HURT, TRUE);
 			odds_multiply_percent(prot_odds,prt_percent);

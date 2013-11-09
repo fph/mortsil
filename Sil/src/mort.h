@@ -45,7 +45,7 @@ odds* odds_difference_capped(odds* o1, odds* o2); /*returns pdf of MAX(0,o1-o2) 
 
 /*simulates the result of hit_roll. Returns 0 for any result <0*/
 /*the logic must match hit_roll(...) in cmd1.c, in case it gets changed */
-odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2, bool is_spore); 
+odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2); 
 
 /*simulates the result of dam_roll and return odds of possible answers.*/
 /*logic must match make_attack_normal in cmd1.c */

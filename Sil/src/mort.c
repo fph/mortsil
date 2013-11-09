@@ -168,16 +168,11 @@ void odds_multiply_percent(odds* o, int percent){
   check_sum(o);
 }
 
-odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2, bool is_spore){
+odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2){
   if(m_ptr2!=PLAYER){
     quit("Errouneous use of hit_roll_odds - it's supposed to work only for hits to the player");  
   }
-  if(is_spore){ //result is always "1"
-    odds* o=make_empty_odds(2);
-    o->p[1]=1.;
-    return o;    
-  }
-  
+
   odds* oatt=make_zero_odds();
   odds* oevn=make_zero_odds();
   add_throw(oatt,1,20);    
