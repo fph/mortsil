@@ -62,7 +62,7 @@ void breath_damage_odds(int dd, int ds, int typ, int resistance); /*simulates *_
 /*places where damage is dealt: 
 		- make_attack_normal in melee1.c (melee) DONE
 		- project_p in spells1.c (arrows, boulders) DONE
-		- fire_dam_pure, cold_dam_pure, dark_dam_pure in spells1.c (breaths) TODO
+		- fire_dam_pure, cold_dam_pure, dark_dam_pure in spells1.c (breaths) DONE
 		- hit_trap in cmd1.c (dungeon traps) TODO
 		- chest_trap in cmd2.c (chest traps) TODO
 		- play_instrument in use-obj.c (aiming a trumpet of blasting up) TODO
