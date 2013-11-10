@@ -660,10 +660,6 @@ bool make_attack_normal(monster_type *m_ptr)
 			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
 			
 			//TODO: do stuff with this
-			//printf("Damage odds:\n");
-			//print_odds(dam_odds);
-			//printf("Protection odds:\n");
-			//print_odds(prot_odds);
 			printf("Melee damage odds:\n");
 			print_odds(net_dam_odds);
 

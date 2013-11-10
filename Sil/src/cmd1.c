@@ -9,7 +9,7 @@
  */
 
 #include "angband.h"
-
+#include "mort.h"
 
 void new_wandering_flow(monster_type *m_ptr, int ty, int tx)
 {	
@@ -2694,6 +2694,12 @@ void hit_trap(int y, int x)
 			/* Falling damage */
 			dam = damroll(2, 4);
 
+			odds* o=make_zero_odds();add_throw(o,2,4);
+			//TODO
+			printf("Pit damage odds:\n");
+			print_odds(o);
+			kill_odds(o);
+
 			update_combat_rolls1b(NULL, PLAYER, TRUE);
 			update_combat_rolls2(2, 4, dam, -1, -1, 0, 0, GF_HURT, FALSE);
 
@@ -2713,6 +2719,12 @@ void hit_trap(int y, int x)
 			/* Falling damage */
 			dam = damroll(2, 4);
 
+			odds* o=make_zero_odds();add_throw(o,2,4);
+			//TODO
+			printf("Pit damage odds:\n");
+			print_odds(o);
+			kill_odds(o);
+
 			update_combat_rolls1b(NULL, PLAYER, TRUE);
 			update_combat_rolls2(2, 4, dam, -1, -1, 0, 0, GF_HURT, FALSE);
 
@@ -2721,6 +2733,16 @@ void hit_trap(int y, int x)
 
 			/* Extra spike damage */
 			dam = damroll(4, 5);
+
+			odds* dam_odds = make_zero_odds();add_throw(dam_odds,4,5);
+			odds* prot_odds = protection_roll_odds(GF_HURT, TRUE);
+			odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
+			//TODO
+			printf("Spiked damage odds:\n");
+			print_odds(net_dam_odds);
+			kill_odds(dam_odds);
+			kill_odds(prot_odds);
+			kill_odds(net_dam_odds);
 
 			/* Protection */
 			prt = protection_roll(GF_HURT, TRUE);
@@ -2751,7 +2773,22 @@ void hit_trap(int y, int x)
 		}
 
 		case FEAT_TRAP_DART:
-		{			
+		{
+			/*mortality calcs: this is funny -- the code checks for chance to damage the player with damage=15 and protection, then deals 1 flat damage if it passes*/
+			odds* dam_odds = make_zero_odds();add_throw(dam_odds,1,15);
+			odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
+			odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
+			odds* chance_to_hit = check_hit_odds(15);
+			odds_chance(net_dam_odds, chance_to_hit);
+			collapse_to_01(net_dam_odds);
+			//TODO
+			printf("Dart damage odds:\n");
+			print_odds(net_dam_odds);
+			kill_odds(dam_odds);
+			kill_odds(prot_odds);
+			kill_odds(net_dam_odds);
+			kill_odds(chance_to_hit);
+		
 			if (check_hit(15, TRUE))
 			{
 				dam = damroll(1,15);
@@ -2852,6 +2889,16 @@ void hit_trap(int y, int x)
 		{
 			msg_print("You are splashed with acid!");
 			
+			odds* dam_odds = make_zero_odds();add_throw(dam_odds,4,4);
+			odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
+			odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
+			//TODO
+			printf("Acid trap damage odds:\n");
+			print_odds(net_dam_odds);
+			kill_odds(dam_odds);
+			kill_odds(prot_odds);
+			kill_odds(net_dam_odds);
+			
 			/* Acid damage */
 			dam = damroll(4, 4);
 			
@@ -2890,6 +2937,15 @@ void hit_trap(int y, int x)
 
 		case FEAT_TRAP_CALTROPS:
 		{
+			odds* chance_to_hit = skill_check_odds(PLAYER, p_ptr->skill_use[S_PER], 10, NULL); collapse_to_01(chance_to_hit);
+			odds* dam_odds = make_zero_odds();add_throw(dam_odds,1,4);
+			odds_chance(dam_odds, chance_to_hit);
+			//TODO
+			printf("Caltrop damage odds:\n");
+			print_odds(dam_odds);
+			kill_odds(dam_odds);
+			kill_odds(chance_to_hit);
+			
 			if (skill_check(PLAYER, p_ptr->skill_use[S_PER], 10, NULL) > 0)
 			{
 				msg_print("You step carefully amidst a field of caltrops.");
@@ -2991,13 +3047,26 @@ void hit_trap(int y, int x)
 				/* Save the safe location */
 				sy = yy; sx = xx;
 			}
-						
+			
+			/*mortality odds: if I understand correctly the code above, sn being zero or nonzero is not random, it only depends on the dungeon features */
+			/* so we can just work inside the if  -fph */
+			
 			/* Hurt the player a lot */
 			if (!sn)
 			{
 				/* Message and damage */
 				msg_print("You are severely crushed!");
 				dam = damroll(6, 8);
+
+				odds* dam_odds = make_zero_odds();add_throw(dam_odds,6,8);
+				odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
+				odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
+				//TODO
+				printf("Deadfall trap damage (type 1) odds:\n");
+				print_odds(net_dam_odds);
+				kill_odds(dam_odds);
+				kill_odds(prot_odds);
+				kill_odds(net_dam_odds);
 
 				/* Protection */
 				prt = protection_roll(GF_HURT, FALSE);
@@ -3016,11 +3085,26 @@ void hit_trap(int y, int x)
 			/* Destroy the grid, and push the player to safety */
 			else
 			{
+			
+				odds* chance_to_hit = check_hit_odds(20);
+				odds* dam_odds = make_zero_odds();add_throw(dam_odds,4,8);
+				odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
+				odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
+				odds_chance(net_dam_odds,chance_to_hit);
+				//TODO
+				printf("Deadfall trap damage (type 2) odds:\n");
+				print_odds(net_dam_odds);
+				kill_odds(dam_odds);
+				kill_odds(prot_odds);
+				kill_odds(net_dam_odds);
+				kill_odds(chance_to_hit);
+
 				/* Calculate results */
 				if (check_hit(20, TRUE))
 				{
 					msg_print("You are struck by rubble!");
 					dam = damroll(4, 8);
+					
 					
 					/* Protection */
 					prt = protection_roll(GF_HURT, FALSE);

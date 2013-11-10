@@ -38,6 +38,8 @@ odds* make_variable_throw(odds *n, int sides); /*create pdf of throwing n dice w
 void odds_multiply_percent(odds* o, int percent); /*multiply x -> (x*percent)/100 (integer division) */
 void odds_multiply(odds* o, int n); /*multiplies by n*/
 void odds_divide(odds* o, int d); /*divides by d*/
+void odds_chance(odds* o, odds* chance); /*simulates a "hit roll": multiplies a pdf (pointwise) by a 0/1 one*/
+void collapse_to_01(odds* o); /*changes pdf to the one of min(o,1) */
 
 void check_sum(odds* o); //debug-like function that throws an error if the odds of something do not sum to 1
 
@@ -59,11 +61,15 @@ odds* protection_roll_odds(int typ, bool melee);
 
 void breath_damage_odds(int dd, int ds, int typ, int resistance); /*simulates *_dam_pure in spells1.c */
 
+odds* check_hit_odds(int power); /*simulates check_hit in cmd1.c, returns odds of 0 or 1 */
+
+odds* skill_check_odds(monster_type *m_ptr1, int skill, int difficulty, monster_type *m_ptr2); /*simulates skill_check in cmd1.c, returning 0 if it goes <=0 */
+
 /*places where damage is dealt: 
 		- make_attack_normal in melee1.c (melee) DONE
 		- project_p in spells1.c (arrows, boulders) DONE
 		- fire_dam_pure, cold_dam_pure, dark_dam_pure in spells1.c (breaths) DONE
-		- hit_trap in cmd1.c (dungeon traps) TODO
+		- hit_trap in cmd1.c (dungeon traps) DONE
 		- chest_trap in cmd2.c (chest traps) TODO
 		- play_instrument in use-obj.c (aiming a trumpet of blasting up) TODO
 		- falling_damage in xtra2.c (falling damage) TODO

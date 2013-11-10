@@ -128,6 +128,7 @@ void add_const(odds* o, int n){
 
 void print_odds(odds* o){
   int i;
+  check_sum(o);
   for(i=0;i<o->length;i++){
     printf("%2d: %g\n",i,o->p[i]);
   }
@@ -154,6 +155,7 @@ odds* odds_difference_capped(odds *o1, odds* o2){
     }
   }
   check_sum(diff);
+  compress_odds(diff);
   return diff;
 }
 
@@ -188,6 +190,25 @@ void odds_divide(odds* o, int d){
   }
   set_odds(o,newp,newlength);
   check_sum(o);
+}
+
+void odds_chance(odds* o, odds* chance){
+	int i;
+	for(i=0;i<o->length; i++){
+		o->p[i] *= chance->p[1];
+	}
+	o->p[0] += chance->p[0];
+}
+
+void collapse_to_01(odds* o){
+	double* newp = make_p(2);
+	int i;
+	
+	newp[0] = o->p[0];
+	for(i=1;i<o->length;i++){
+		newp[1] += o->p[i];
+	}
+	set_odds(o,newp,2);
 }
 
 odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2){
@@ -315,4 +336,31 @@ void breath_damage_odds(int dd, int ds, int typ, int resistance){
 	kill_odds(dam_odds);
 	kill_odds(prot_odds);
 	kill_odds(result);
+}
+
+odds* check_hit_odds(int power){
+	odds* o = hit_roll_odds(power, p_ptr->skill_use[S_EVN] + dodging_bonus(), NULL, PLAYER);
+	collapse_to_01(o);
+	print_odds(o);
+	return o;
+}
+
+odds* skill_check_odds(monster_type *m_ptr1, int skill, int difficulty, monster_type *m_ptr2){
+	// bonuses against your enemy of choice
+	if ((m_ptr1 == PLAYER) && (m_ptr2 != NULL)) skill += bane_bonus(m_ptr2);
+	if ((m_ptr2 == PLAYER) && (m_ptr1 != NULL)) difficulty += bane_bonus(m_ptr1);
+	
+	odds* skill_odds = make_zero_odds();add_throw(skill_odds,1,10);add_const(skill_odds,skill);
+	odds* difficulty_odds = make_zero_odds();add_throw(difficulty_odds,1,10);add_const(difficulty_odds,difficulty);
+	// player curse?
+	if (p_ptr->cursed)
+	{ 
+		if (m_ptr1 == PLAYER) min_twice(skill_odds);
+		if (m_ptr2 == PLAYER) min_twice(difficulty_odds);
+	}
+
+	odds* result = odds_difference_capped(skill_odds, difficulty_odds);
+	kill_odds(skill_odds);
+	kill_odds(difficulty_odds);
+	return result;
 }
