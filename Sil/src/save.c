@@ -863,8 +863,9 @@ static void wr_extra(void)
 	wr_byte(0);
 	wr_u32b(0L);
 	wr_u32b(0L);
-	wr_u32b(0L);
-	wr_u32b(0L);
+	
+	wr_u32b((p_ptr->loglive.i)[0]); //mortality info
+	wr_u32b((p_ptr->loglive.i)[1]);
 		
 	/* Save item-quality squelch sub-menu */
 	for (i = 0; i < SQUELCH_BYTES; i++) wr_byte(squelch_level[i]);

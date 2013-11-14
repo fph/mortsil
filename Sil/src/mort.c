@@ -418,7 +418,7 @@ void take_hit_odds(odds* dam, const char* source){
 	for(i=dam->length; i >= p_ptr->chp;i--){
 		probdeath += dam->p[i];
 	}
-	p_ptr->loglive += log1p(-probdeath);
-	printf("Probability of being dead: %g millimort\n", -expm1(p_ptr->loglive)*1e3);
+	p_ptr->loglive.d += log1p(-probdeath);
+	printf("Probability of being dead: %g millimort\n", -expm1(p_ptr->loglive.d)*1.e3);
 }
 

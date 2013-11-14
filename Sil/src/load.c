@@ -846,7 +846,11 @@ static errr rd_extra(void)
 	rd_byte(&p_ptr->self_made_arts);
 
 	// 20 spare bytes
-	strip_bytes(20);
+	strip_bytes(12);
+	
+	//read mortality
+	rd_u32b(&((p_ptr->loglive.i)[0]));
+	rd_u32b(&((p_ptr->loglive.i)[1]));
 
 		
 	/* Read item-quality squelch sub-menu */

@@ -37,6 +37,9 @@
  */
 
 
+#include <stdint.h> /*I need a 32-bit integer to cast doubles to for mortality computations*/
+/* when I found out that u32b is 64 bit wide on gcc-Linux-amd64 I included this */
+/* not sure if it's standard, if it's good practice, but I need something that works */
 
 /**** Available Types ****/
 
@@ -1066,7 +1069,10 @@ struct player_type
 	
 	byte artefacts;		/* Number of artefacts generated so far */
 	
-	double loglive; /* see description in mort.h, used for mortality odds */
+	union{
+		double d;
+		int32_t i[2]; /* hack to allow saving/loading. Note that this is not u32b but in32_t, since sizeof(u32b)==8, at least on linux-amd64 */
+	} loglive; /* see description in mort.h */
 };
 
 

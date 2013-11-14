@@ -1919,7 +1919,7 @@ static bool player_birth_aux(void)
 	// Reset the number of artefacts
 	p_ptr->artefacts = 0;
 
-	p_ptr->loglive = 0.0; //mortality odds
+	p_ptr->loglive.d = 0.0; //mortality odds
 
 	/* Accept */
 	return (TRUE);
