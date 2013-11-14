@@ -419,6 +419,6 @@ void take_hit_odds(odds* dam, const char* source){
 		probdeath += dam->p[i];
 	}
 	p_ptr->loglive.d += log1p(-probdeath);
-	printf("Probability of being dead: %g millimort\n", -expm1(p_ptr->loglive.d)*1.e3);
+	printf("Probability of being dead: %g millimort\n", fabs(-expm1(p_ptr->loglive.d)*1.e3)); //fabs() serves the only purpose of converting -0 to 0.
 }
 
