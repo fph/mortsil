@@ -1065,6 +1065,8 @@ struct player_type
 	s16b hunger;		/* Hunger rate */
 	
 	byte artefacts;		/* Number of artefacts generated so far */
+	
+	double loglive; /* see description in mort.h, used for mortality odds */
 };
 
 

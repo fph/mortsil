@@ -408,4 +408,17 @@ odds* allow_player_aux_odds(monster_type *m_ptr, int player_flag)
 void take_hit_odds(odds* dam, const char* source){
 	printf("==Damage from %s:\n", source);
 	print_odds(dam);
+	
+	//for these computation, check the comments in mort.h
+	
+	double probdeath=0.0;
+	int i;
+	//we make this cycle from the end since small probabilities are at the end and for better accuracy they have to be summed first
+	//moreover, note that damage == chp results in death ,so there is a >= there.
+	for(i=dam->length; i >= p_ptr->chp;i--){
+		probdeath += dam->p[i];
+	}
+	p_ptr->loglive += log1p(-probdeath);
+	printf("Probability of being dead: %g millimort\n", -expm1(p_ptr->loglive)*1e3);
 }
+

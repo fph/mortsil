@@ -85,4 +85,24 @@ void take_hit_odds(odds* dam, const char* source); /* Does stuff whenever the pl
 		- earthquake, genocides in spells2.c <- I believe Sil does not use these
 */
 
+/*
+	How we compute and store mortality odds:
+	
+	P(being alive after turn T) = P(being alive after turn T-1)*P(surviving turn T)
+	
+	we store ln(P(being alive)) in a variable, p_ptr->loglive
+	
+	at each event, we compute the probability of surviving it and sum it to p_ptr->loglive
+	note that all these logarithms are negative, so we are actually decreasing this (log-)probability
+	
+	then we display 1-exp(p_ptr->loglive) = -expm1(p_ptr->loglive)
+	
+	the probability of surviving an event is computed as log(1-probability of dying to the event) = log1p(-prob_death), where prob_death = sum_{i\geq current HP} p[i].
+	
+	using expm1 and log1p is crucial to have good accuracy (check their man page in <math.h>):
+	indeed, we expect prob_death and p_ptr->loglive to be small
+	
+	on character creation, P(being alive)==1 and p_ptr->loglive == 0);
+*/
+
 #endif /*INCLUDED_MORT_H*/

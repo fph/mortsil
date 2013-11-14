@@ -113,35 +113,35 @@ CC = gcc
 ## Standard -- "main-x11.c" & "main-gcu.c"
 ##
 CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU"
-LIBS = -lX11 -lcurses
+LIBS = -lX11 -lcurses -lm
 
 
 ##
 ## Variation -- "main-x11.c" & "main-gcu.c" (for Mac OS X)
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU"
-#LIBS = -L/usr/X11/lib -lX11 -lcurses
+#LIBS = -L/usr/X11/lib -lX11 -lcurses -lm
 
 
 ##
 ## Variation -- "main-x11.c"
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11"
-#LIBS = -lX11
+#LIBS = -lX11 -lm
 
 
 ##
 ## Variation -- "main-x11.c" (for Mac OS X)
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11"
-#LIBS = -L/usr/X11/lib -lX11
+#LIBS = -L/usr/X11/lib -lX11 -lm
 
 
 ##
 ## Variation -- "main-gcu.c"
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU"
-#LIBS = -lcurses
+#LIBS = -lcurses -lm
 
 
 ##
@@ -149,14 +149,14 @@ LIBS = -lX11 -lcurses
 ## Note: gtk-config adds GTK and X11 includes and libraries as appropriate.
 ##
 #CFLAGS = -Wall -O `gtk-config --cflags` -g -D"USE_GTK" -D"USE_GCU"
-#LIBS = `gtk-config --libs` -lcurses
+#LIBS = `gtk-config --libs` -lcurses -lm
 
 
 ##
 ## Variation -- "main-x11.c" & "main-cap.c
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_CAP"
-#LIBS = -lX11
+#LIBS = -lX11 -lm
 
 
 ##
@@ -174,7 +174,7 @@ LIBS = -lX11 -lcurses
 #CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses -Wall \
 #         -O2 -fno-strength-reduce \
 #         -D"USE_X11" -D"USE_GCU" -D"USE_NCURSES"
-#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lncurses
+#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lncurses -lm
 
 
 ##
@@ -183,7 +183,7 @@ LIBS = -lX11 -lcurses
 ## Allows the use of Sil in the console using curses.
 ##
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -D"USE_GCU"
-#LIBS = -lcurses
+#LIBS = -lcurses -lm
 
 
 ##
@@ -192,7 +192,7 @@ LIBS = -lX11 -lcurses
 ## Allows the use of Sil in X11 using the Athena Widget set.
 ##
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g -D"USE_XAW"
-#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11
+#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lm
 
 
 ##
@@ -202,7 +202,7 @@ LIBS = -lX11 -lcurses
 #         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer \
 #         -D"USE_X11" -D"USE_GCU" \
 #         -D"USE_TPOSIX" -D"USE_CURS_SET"
-#LIBS = -lX11 -lncurses
+#LIBS = -lX11 -lncurses -lm
 #LDFLAGS = -s
 
 
@@ -210,14 +210,14 @@ LIBS = -lX11 -lcurses
 ## Variation -- compile for Solaris
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SOLARIS"
-#LIBS = -lX11 -lsocket -lcurses
+#LIBS = -lX11 -lsocket -lcurses -lm
 
 
 ##
 ## Variation -- compile for SGI Indigo runnig Irix
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SGI"
-#LIBS = -lX11 -lcurses -ltermcap -lsun
+#LIBS = -lX11 -lcurses -lm -ltermcap -lsun
 
 
 ##
@@ -226,21 +226,21 @@ LIBS = -lX11 -lcurses
 #CC     = cc
 ##CFLAGS = -std -O -g3 -Olimit 4000 -D"USE_X11" -D"USE_GCU"
 #CFLAGS = -std -g -D"USE_X11" -D"USE_GCU"
-#LIBS   = -lX11 -lcurses -ltermcap -lrpcsvc
+#LIBS   = -lX11 -lcurses -lm -ltermcap -lrpcsvc
 
 
 ##
 ## Variation -- compile for Interactive Unix (ISC) systems
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"ISC"
-#LIBS = -lX11 -lcurses -lnsl_s -linet -lcposix
+#LIBS = -lX11 -lcurses -lm -lnsl_s -linet -lcposix
 
 
 ##
 ## Variation -- Support fat binaries under NEXTSTEP
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU" -arch m68k -arch i386
-#LIBS = -lcurses -ltermcap
+#LIBS = -lcurses -lm -ltermcap
 
 
 
