@@ -9,6 +9,7 @@
  */
 
 #include "angband.h"
+#include "mort.h"
 
 /*
  * The saving throw is a will skill check.
@@ -1565,6 +1566,11 @@ void falling_damage(bool stun)
 		case  HEALTH_BADLY_WOUNDED:			dice = 1;	break;  // <= 50% health
 		case  HEALTH_ALMOST_DEAD:			dice = 0;	break;  // <= 25% health
 	}
+	
+	odds* dam_odds = make_zero_odds(); add_throw(dam_odds, dice, 4);
+	printf("Falling damage odds:\n");
+	print_odds(dam_odds);
+	kill_odds(dam_odds);
 	
 	// calculate the damage
 	dam = damroll(dice, 4);

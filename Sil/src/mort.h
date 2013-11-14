@@ -78,7 +78,7 @@ odds* allow_player_aux_odds(monster_type *m_ptr, int player_flag); /*simulates a
 		- hit_trap in cmd1.c (dungeon traps) DONE
 		- chest_trap in cmd2.c (chest traps) DONE
 		- play_instrument in use-obj.c (aiming a trumpet of blasting up) DONE
-		- falling_damage in xtra2.c (falling damage) TODO
+		- falling_damage in xtra2.c (falling damage) DONE
 		- process_player in dungeon.c (poison, starvation, cuts) <- we can safely ignore this since it's flat damage, with no random component: either you die or not
 		- earthquake, genocides in spells2.c <- I believe Sil does not use these
 */
