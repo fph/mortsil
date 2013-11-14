@@ -342,11 +342,7 @@ void breath_damage_odds(int dd, int ds, int typ, int resistance){
 	odds* prot_odds = protection_roll_odds(typ, FALSE);
 	
 	odds* result = odds_difference_capped(dam_odds, prot_odds);
-	
-	//TODO: do stuff
-	printf("Breath damage odds:\n");
-	print_odds(result);
-	
+	take_hit_odds(result,"breath attack");
 	kill_odds(dam_odds);
 	kill_odds(prot_odds);
 	kill_odds(result);
@@ -355,7 +351,6 @@ void breath_damage_odds(int dd, int ds, int typ, int resistance){
 odds* check_hit_odds(int power){
 	odds* o = hit_roll_odds(power, p_ptr->skill_use[S_EVN] + dodging_bonus(), NULL, PLAYER);
 	collapse_to_01(o);
-	print_odds(o);
 	return o;
 }
 
@@ -410,3 +405,7 @@ odds* allow_player_aux_odds(monster_type *m_ptr, int player_flag)
 	return st;
 }
 
+void take_hit_odds(odds* dam, const char* source){
+	printf("==Damage from %s:\n", source);
+	print_odds(dam);
+}

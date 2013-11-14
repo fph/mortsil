@@ -2695,9 +2695,7 @@ void hit_trap(int y, int x)
 			dam = damroll(2, 4);
 
 			odds* o=make_zero_odds();add_throw(o,2,4);
-			//TODO
-			printf("Pit damage odds:\n");
-			print_odds(o);
+			take_hit_odds(o,"pit");
 			kill_odds(o);
 
 			update_combat_rolls1b(NULL, PLAYER, TRUE);
@@ -2720,9 +2718,7 @@ void hit_trap(int y, int x)
 			dam = damroll(2, 4);
 
 			odds* o=make_zero_odds();add_throw(o,2,4);
-			//TODO
-			printf("Pit damage odds:\n");
-			print_odds(o);
+			take_hit_odds(o,"spiked pit - falling damage");
 			kill_odds(o);
 
 			update_combat_rolls1b(NULL, PLAYER, TRUE);
@@ -2737,9 +2733,7 @@ void hit_trap(int y, int x)
 			odds* dam_odds = make_zero_odds();add_throw(dam_odds,4,5);
 			odds* prot_odds = protection_roll_odds(GF_HURT, TRUE);
 			odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
-			//TODO
-			printf("Spiked damage odds:\n");
-			print_odds(net_dam_odds);
+			take_hit_odds(net_dam_odds,"spiked pit - spike damage");
 			kill_odds(dam_odds);
 			kill_odds(prot_odds);
 			kill_odds(net_dam_odds);
@@ -2781,9 +2775,7 @@ void hit_trap(int y, int x)
 			odds* chance_to_hit = check_hit_odds(15);
 			odds_chance(net_dam_odds, chance_to_hit);
 			collapse_to_01(net_dam_odds);
-			//TODO
-			printf("Dart damage odds:\n");
-			print_odds(net_dam_odds);
+			take_hit(net_dam_odds,"dart trap");
 			kill_odds(dam_odds);
 			kill_odds(prot_odds);
 			kill_odds(net_dam_odds);
@@ -2892,9 +2884,7 @@ void hit_trap(int y, int x)
 			odds* dam_odds = make_zero_odds();add_throw(dam_odds,4,4);
 			odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
 			odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
-			//TODO
-			printf("Acid trap damage odds:\n");
-			print_odds(net_dam_odds);
+			take_hit_odds(net_dam_odds,"acid trap");
 			kill_odds(dam_odds);
 			kill_odds(prot_odds);
 			kill_odds(net_dam_odds);
@@ -2940,9 +2930,7 @@ void hit_trap(int y, int x)
 			odds* chance_to_hit = skill_check_odds(PLAYER, p_ptr->skill_use[S_PER], 10, NULL); collapse_to_01(chance_to_hit);
 			odds* dam_odds = make_zero_odds();add_throw(dam_odds,1,4);
 			odds_chance(dam_odds, chance_to_hit);
-			//TODO
-			printf("Caltrop damage odds:\n");
-			print_odds(dam_odds);
+			take_hit_odds(dam_odds,"caltrop trap");
 			kill_odds(dam_odds);
 			kill_odds(chance_to_hit);
 			
@@ -3061,9 +3049,7 @@ void hit_trap(int y, int x)
 				odds* dam_odds = make_zero_odds();add_throw(dam_odds,6,8);
 				odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
 				odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
-				//TODO
-				printf("Deadfall trap damage (type 1) odds:\n");
-				print_odds(net_dam_odds);
+				take_hit_odds(net_dam_odds,"deadfall trap (type 1)");
 				kill_odds(dam_odds);
 				kill_odds(prot_odds);
 				kill_odds(net_dam_odds);
@@ -3091,9 +3077,7 @@ void hit_trap(int y, int x)
 				odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
 				odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
 				odds_chance(net_dam_odds,chance_to_hit);
-				//TODO
-				printf("Deadfall trap damage (type 2) odds:\n");
-				print_odds(net_dam_odds);
+				take_hit_odds(net_dam_odds,"deadfall trap (type 2)");
 				kill_odds(dam_odds);
 				kill_odds(prot_odds);
 				kill_odds(net_dam_odds);

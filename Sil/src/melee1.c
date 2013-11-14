@@ -658,11 +658,7 @@ bool make_attack_normal(monster_type *m_ptr)
 			odds* prot_odds = protection_roll_odds(GF_HURT, TRUE);
 			odds_multiply_percent(prot_odds,prt_percent);
 			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
-			
-			//TODO: do stuff with this
-			printf("Melee damage odds:\n");
-			print_odds(net_dam_odds);
-
+			take_hit_odds(net_dam_odds,"melee attack");
 			kill_odds(hit_result_odds);
 			kill_odds(dam_odds);
 			kill_odds(prot_odds);

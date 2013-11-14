@@ -3225,11 +3225,7 @@ static bool project_p(int who, int y, int x, int dd, int ds, int dif, int typ)
 			odds* dam_odds = damroll_odds(hit_result_odds, dd, ds, weight, &r_info[0], 0, S_ARC, FALSE);
 			odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
 			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
-
-			//TODO: do stuff with this
-			printf("Ranged damage odds:\n");
-			print_odds(net_dam_odds);
-
+			take_hit_odds(net_dam_odds,"arrow");
 			kill_odds(hit_result_odds);
 			kill_odds(dam_odds);
 			kill_odds(prot_odds);
@@ -3304,10 +3300,7 @@ static bool project_p(int who, int y, int x, int dd, int ds, int dif, int typ)
 			odds* dam_odds = damroll_odds(hit_result_odds, dd, ds, 100, &r_info[0], 0, S_ARC, FALSE);
 			odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
 			odds* net_dam_odds = odds_difference_capped(dam_odds,prot_odds);
-
-			//TODO: do stuff with this
-			printf("Ranged damage odds:\n");
-			print_odds(net_dam_odds);
+			take_hit_odds(net_dam_odds,"boulder");
 
 			kill_odds(hit_result_odds);
 			kill_odds(dam_odds);

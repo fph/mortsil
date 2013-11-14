@@ -661,9 +661,7 @@ static bool play_instrument(object_type *o_ptr, bool *ident)
 				odds* dam_odds = make_zero_odds();add_throw(dam_odds,4,8);
 				odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
 				odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
-				//TODO
-				printf("Trumpet of blasting damage odds:\n");
-				print_odds(net_dam_odds);
+				take_hit_odds(net_dam_odds,"trumpet of blasting aimed up");
 				kill_odds(dam_odds);
 				kill_odds(prot_odds);
 				kill_odds(net_dam_odds);

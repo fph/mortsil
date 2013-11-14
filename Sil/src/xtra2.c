@@ -1568,8 +1568,7 @@ void falling_damage(bool stun)
 	}
 	
 	odds* dam_odds = make_zero_odds(); add_throw(dam_odds, dice, 4);
-	printf("Falling damage odds:\n");
-	print_odds(dam_odds);
+	take_hit_odds(dam_odds,"falling");
 	kill_odds(dam_odds);
 	
 	// calculate the damage

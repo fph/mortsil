@@ -71,6 +71,8 @@ odds* saving_throw_odds(monster_type *m_ptr, bool resistance); /*simulates savin
 
 odds* allow_player_aux_odds(monster_type *m_ptr, int player_flag); /*simulates allow_player_aux in xtra2.c*/
 
+void take_hit_odds(odds* dam, const char* source); /* Does stuff whenever the player could take damage. Defaults to printing the odds on stdout and updating mortality */
+
 /*places where damage is dealt: 
 		- make_attack_normal in melee1.c (melee) DONE
 		- project_p in spells1.c (arrows, boulders) DONE
