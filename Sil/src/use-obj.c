@@ -9,7 +9,7 @@
  */
 
 #include "angband.h"
-
+#include "mort.h"
 
 static bool eat_food(object_type *o_ptr, bool *ident)
 {
@@ -657,6 +657,17 @@ static bool play_instrument(object_type *o_ptr, bool *ident)
 		{			
 			if (dir == DIRECTION_UP)
 			{
+				
+				odds* dam_odds = make_zero_odds();add_throw(dam_odds,4,8);
+				odds* prot_odds = protection_roll_odds(GF_HURT, FALSE);
+				odds* net_dam_odds = odds_difference_capped(dam_odds, prot_odds);
+				//TODO
+				printf("Trumpet of blasting damage odds:\n");
+				print_odds(net_dam_odds);
+				kill_odds(dam_odds);
+				kill_odds(prot_odds);
+				kill_odds(net_dam_odds);
+				
 				int dam = damroll(4,8);
 				int prt = protection_roll(GF_HURT, FALSE);
 				int net_dam = dam - prt;
