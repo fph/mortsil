@@ -9,6 +9,7 @@
  */
 
 #include "angband.h"
+#include "mort.h"
 
 /*
  * Determines the shallowest a player is allowed to go.
@@ -763,6 +764,16 @@ static void chest_trap(int y, int x, s16b o_idx)
 	if (trap & (CHEST_GAS_STUN))
 	{
 		msg_print("Acrid smoke pours from the chest!");
+		
+		odds* chance = allow_player_aux_odds(NULL,p_ptr->resist_stun);
+		odds * dam_odds = make_zero_odds(); add_throw(dam_odds,3,4); odds_chance(dam_odds, chance);
+		
+		//TODO
+		printf("Smoke trapped chest odds:\n");
+		print_odds(dam_odds);
+		kill_odds(dam_odds);
+		kill_odds(chance);
+		
 		if (allow_player_stun(NULL))
 		{
 			msg_print("It fills your lungs and your mind reels.");

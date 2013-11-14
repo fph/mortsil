@@ -51,6 +51,15 @@ void check_sum(odds* o){
   }
 }
 
+void negate(odds* o){
+	if(o->length != 2)
+		quit("error: called negate() on a non-boolean odds");
+	
+	double tmp = o->p[1];
+	o->p[1] = o->p[0];
+	o->p[0] = tmp;
+}
+
 void add_scaled_odds(odds* o1, double constant, odds* o2){
   int i;
   if(o1==NULL){
@@ -194,10 +203,15 @@ void odds_divide(odds* o, int d){
 
 void odds_chance(odds* o, odds* chance){
 	int i;
+	if(chance->length != 2)
+		quit("wrong odds length");
+	
 	for(i=0;i<o->length; i++){
 		o->p[i] *= chance->p[1];
 	}
 	o->p[0] += chance->p[0];
+	
+	check_sum(o);
 }
 
 void collapse_to_01(odds* o){
@@ -364,3 +378,35 @@ odds* skill_check_odds(monster_type *m_ptr1, int skill, int difficulty, monster_
 	kill_odds(difficulty_odds);
 	return result;
 }
+
+odds* saving_throw_odds(monster_type *m_ptr, bool resistance){
+		int player_score = p_ptr->skill_use[S_WIL];
+	int difficulty;
+	
+	if (m_ptr == NULL)	difficulty = 10;
+	else				difficulty = monster_will(m_ptr);
+	
+	if (resistance)		difficulty -= 10;
+	
+	odds* res = skill_check_odds(m_ptr, difficulty, player_score, PLAYER);
+	collapse_to_01(res);
+	
+	return res;
+}
+
+odds* allow_player_aux_odds(monster_type *m_ptr, int player_flag)
+{
+	bool resistance = FALSE;
+	
+	if (player_flag)
+	{ 
+		
+		// makes things much easier
+		resistance = TRUE;
+	}
+	
+	odds* st = saving_throw_odds(m_ptr, resistance);
+	negate(st); //don't allow if saving throw passes, right?
+	return st;
+}
+

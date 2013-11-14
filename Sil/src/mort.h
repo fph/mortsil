@@ -47,6 +47,8 @@ void print_odds(odds*);
 
 odds* odds_difference_capped(odds* o1, odds* o2); /*returns pdf of MAX(0,o1-o2) */
 
+void negate(odds* o); /*swaps 0 and 1 for a boolean (length-2) pdf*/
+
 /*simulates the result of hit_roll. Returns 0 for any result <0*/
 /*the logic must match hit_roll(...) in cmd1.c, in case it gets changed */
 odds* hit_roll_odds(int att, int evn, const monster_type *m_ptr1, const monster_type *m_ptr2); 
@@ -65,17 +67,20 @@ odds* check_hit_odds(int power); /*simulates check_hit in cmd1.c, returns odds o
 
 odds* skill_check_odds(monster_type *m_ptr1, int skill, int difficulty, monster_type *m_ptr2); /*simulates skill_check in cmd1.c, returning 0 if it goes <=0 */
 
+odds* saving_throw_odds(monster_type *m_ptr, bool resistance); /*simulates saving_throw in xtra2.c*/
+
+odds* allow_player_aux_odds(monster_type *m_ptr, int player_flag); /*simulates allow_player_aux in xtra2.c*/
+
 /*places where damage is dealt: 
 		- make_attack_normal in melee1.c (melee) DONE
 		- project_p in spells1.c (arrows, boulders) DONE
 		- fire_dam_pure, cold_dam_pure, dark_dam_pure in spells1.c (breaths) DONE
 		- hit_trap in cmd1.c (dungeon traps) DONE
-		- chest_trap in cmd2.c (chest traps) TODO
+		- chest_trap in cmd2.c (chest traps) DONE
 		- play_instrument in use-obj.c (aiming a trumpet of blasting up) TODO
 		- falling_damage in xtra2.c (falling damage) TODO
 		- process_player in dungeon.c (poison, starvation, cuts) <- we can safely ignore this since it's flat damage, with no random component: either you die or not
 		- earthquake, genocides in spells2.c <- I believe Sil does not use these
 */
-
 
 #endif /*INCLUDED_MORT_H*/
